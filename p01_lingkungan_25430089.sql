@@ -27,5 +27,5 @@ SELECT @@sql_mode;
 CREATE USER 'tamu_089'@'localhost'
 IDENTIFIED BY '<PASSWORD>';
 
-GRANT ALL PRIVILEGES ON kopma_089.* 
+GRANT SELECT ON kopma_089.* 
 TO 'tamu_089'@'localhost';
