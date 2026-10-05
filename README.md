@@ -13,4 +13,4 @@ Kelas: D
 **Nama Organisasi:** Academic Center RR
 
 **Lingkup Layanan:**  
-Ria Rahmadani Academic Center merupakan organisasi fiktif yang bergerak dalam pengelolaan layanan akademik mahasiswa. Sistem ini digunakan untuk mengelola data mahasiswa, mata kuliah, jadwal perkuliahan, KRS, serta nilai akademik.
+Academic Center RR merupakan organisasi fiktif yang bergerak dalam pengelolaan layanan akademik mahasiswa. Sistem ini digunakan untuk mengelola data mahasiswa, mata kuliah, jadwal perkuliahan, KRS, serta nilai akademik.
