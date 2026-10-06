@@ -30,10 +30,11 @@ IDENTIFIED BY '<PASSWORD>';
 GRANT SELECT ON kopma_089.* 
 TO 'tamu_089'@'localhost';
 
+
+
 -- Milestone Proyek 1
 
 -- Tema: Akademik
-
 
 
 CREATE DATABASE IF NOT EXISTS akad_089
