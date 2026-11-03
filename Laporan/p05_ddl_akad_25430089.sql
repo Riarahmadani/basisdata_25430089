@@ -1,110 +1,70 @@
-CREATE DATABASE IF NOT EXISTS akad_089;
+-- ============================================================================
+-- File: p06_data_25430089.sql
+-- Modul 6 - Pengisian, Pengubahan, dan Pengujian Data dengan DML
+-- Database: akad_089 | NIM: 25430089 | Nama: Ria Rahmadani
+-- ============================================================================
+
 USE akad_089;
 
--- 1. Tabel MAHASISWA
-CREATE TABLE mahasiswa (
-    id_mahasiswa INT AUTO_INCREMENT PRIMARY KEY,
-    nim CHAR(15) UNIQUE,
-    nama_mahasiswa VARCHAR(100) NOT NULL,
-    program_studi VARCHAR(100) NOT NULL,
-    angkatan INT NOT NULL,
-    no_hp VARCHAR(20) NULL,
-    status_aktif ENUM('Aktif', 'Cuti', 'Keluar')
-        NOT NULL DEFAULT 'Aktif'
-) ENGINE=InnoDB;
+-- ----------------------------------------------------------------------------
+-- 1. PENGISIAN DATA MASTER / INDUK
+-- ----------------------------------------------------------------------------
 
--- 2. Tabel DOSEN
-CREATE TABLE dosen (
-    id_dosen INT AUTO_INCREMENT PRIMARY KEY,
-    kode_dosen CHAR(15) NOT NULL UNIQUE,
-    nama_dosen VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    prodi VARCHAR(100) NOT NULL
-) ENGINE=InnoDB;
+-- A. Data Mahasiswa
+INSERT INTO mahasiswa (nim_mahasiswa, nama_mahasiswa, prodi_mahasiswa, angkatan_mahasiswa, no_hp_mahasiswa, status_aktif_mahasiswa) VALUES
+('25430089', 'Ria Rahmadani', 'Ilmu Komputer', 2025, '081234567889', 'Aktif'),
+('25430001', 'Budi Santoso', 'Ilmu Komputer', 2025, '081234567890', 'Aktif'),
+('25430002', 'Siti Aminah', 'Ilmu Komputer', 2025, '081234567891', 'Aktif'),
+('25430003', 'Eko Prasetyo', 'Sistem Informasi', 2025, NULL, 'Aktif'),
+('25430004', 'Dewi Lestari', 'Teknik Informatika', 2024, '081234567893', 'Cuti');
 
--- 3. Tabel MATA_KULIAH
-CREATE TABLE mata_kuliah (
-    id_mk INT AUTO_INCREMENT PRIMARY KEY,
-    kode_mk CHAR(15) NOT NULL UNIQUE,
-    nama_mk VARCHAR(100) NOT NULL,
-    sks SMALLINT CHECK (sks > 0),
-    semester_kurikulum SMALLINT
-        CHECK (semester_kurikulum > 0)
-) ENGINE=InnoDB;
+-- B. Data Dosen
+INSERT INTO dosen (kode_dosen, nama_dosen, email_dosen, prodi_dosen) VALUES
+('D01', 'Dedi Irawan, S.Kom., M.T.I.', 'dedi@ummetro.ac.id', 'Ilmu Komputer'),
+('D02', 'Ahmad Syafii, M.T.', 'syafii@ummetro.ac.id', 'Sistem Informasi'),
+('D03', 'Nadia Putri, M.Kom.', 'nadia@ummetro.ac.id', 'Teknik Informatika');
 
--- 4. Tabel KRS
-CREATE TABLE krs (
-    id_krs INT AUTO_INCREMENT PRIMARY KEY,
-    no_krs VARCHAR(30) NOT NULL UNIQUE,
-    nim CHAR(15) NOT NULL,
-    semester_aktif VARCHAR(20) NOT NULL,
-    tanggal_pengajuan DATE NOT NULL,
-    status_persetujuan
-        ENUM('Pending', 'Disetujui', 'Ditolak')
-        NOT NULL DEFAULT 'Pending',
+-- C. Data Mata Kuliah
+INSERT INTO mata_kuliah (kode_mk, nama_mk, sks, semester_kurikulum) VALUES
+('INF301', 'Basis Data', 3, 3),
+('INF302', 'Kecerdasan Buatan', 3, 3),
+('INF303', 'Statistika dan Probabilitas', 2, 3),
+('INF304', 'Organisasi Komputer', 3, 3);
 
-    FOREIGN KEY (nim)
-        REFERENCES mahasiswa(nim)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE=InnoDB;
+-- ----------------------------------------------------------------------------
+-- 2. PENGISIAN DATA RELASI & TRANSAKSI
+-- ----------------------------------------------------------------------------
 
--- 5. Tabel KELAS_PERKULIAHAN
-CREATE TABLE kelas_perkuliahan (
-    id_kelas INT AUTO_INCREMENT PRIMARY KEY,
-    kode_kelas CHAR(15) NOT NULL UNIQUE,
-    kode_mk INT NOT NULL,
-    kode_dosen INT NOT NULL,
-    ruangan VARCHAR(50) NOT NULL,
-    kapasitas SMALLINT CHECK (kapasitas >= 0),
+-- D. Data Kelas Perkuliahan
+INSERT INTO kelas_perkuliahan (kode_kelas, kode_mk, kode_dosen, ruangan, kapasitas) VALUES
+('KLS-INF301-A', 1, 1, 'Lab Komputer 1', 30),
+('KLS-INF302-A', 2, 3, 'Ruang 201', 35),
+('KLS-INF303-A', 3, 2, 'Ruang 202', 40);
 
-    FOREIGN KEY (kode_mk)
-        REFERENCES mata_kuliah(id_mk)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
+-- E. Data KRS Header
+INSERT INTO krs (no_krs, nim, semester_aktif, tanggal_pengajuan, status_persetujuan) VALUES
+('KRS-20261-001', '25430089', '20261', '2026-09-01', 'Disetujui'),
+('KRS-20261-002', '25430001', '20261', '2026-09-01', 'Disetujui'),
+('KRS-20261-003', '25430002', '20261', '2026-09-02', 'Pending');
 
-    FOREIGN KEY (kode_dosen)
-        REFERENCES dosen(id_dosen)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE=InnoDB;
+-- F. Data Detail KRS
+INSERT INTO detail_krs (id_krs, id_kelas) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(2, 1),
+(2, 3);
 
--- 6. Tabel DETAIL_KRS
-CREATE TABLE detail_krs (
-    id_krs INT NOT NULL,
-    id_kelas INT NOT NULL,
+-- G. Data Penilaian
+INSERT INTO penilaian (nim, id_kelas, nilai_tugas, nilai_uts, nilai_uas, nilai_akhir, grade) VALUES
+('25430089', 1, 85.00, 80.00, 90.00, 85.50, 'A'),
+('25430001', 1, 75.00, 70.00, 80.00, 75.00, 'B');
 
-    PRIMARY KEY (id_krs, id_kelas),
+-- ----------------------------------------------------------------------------
+-- 3. UJI UPDATE AMAN (sql_safe_updates)
+-- ----------------------------------------------------------------------------
+SET SESSION sql_safe_updates = 1;
 
-    FOREIGN KEY (id_krs)
-        REFERENCES krs(id_krs)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-
-    FOREIGN KEY (id_kelas)
-        REFERENCES kelas_perkuliahan(id_kelas)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE=InnoDB;
-
--- 7. Tabel PENILAIAN
-CREATE TABLE penilaian (
-    id_nilai INT AUTO_INCREMENT PRIMARY KEY,
-    nim CHAR(15) NOT NULL,
-    id_kelas INT NOT NULL,
-    nilai_tugas DECIMAL(5,2),
-    nilai_uts DECIMAL(5,2),
-    nilai_uas DECIMAL(5,2),
-    nilai_akhir DECIMAL(5,2),
-    grade ENUM('A', 'AB', 'B', 'BC', 'C', 'D', 'E'),
-
-    FOREIGN KEY (nim)
-        REFERENCES mahasiswa(nim)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    FOREIGN KEY (id_kelas)
-        REFERENCES kelas_perkuliahan(id_kelas)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE=InnoDB;
+UPDATE mahasiswa 
+SET status_aktif_mahasiswa = 'Aktif' 
+WHERE prodi_mahasiswa = 'Ilmu Komputer' AND id_mahasiswa > 0;
